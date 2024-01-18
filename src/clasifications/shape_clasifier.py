@@ -61,19 +61,19 @@ class ShapeClassifier:
                 #En funcion de los lados que la funcion approxPolyDP nos devuelva clasificamos el controno y añadimo informacion relevante
                 if sides == 4:
                     self.square_cnts.append(contour)
-                    self.shape_info.append({'label': "Square", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour})
+                    self.shape_info.append({'label': "Square", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour, 'angle': 0})
                     self.detected = True
                 elif sides == 3:
                     self.triangle_cnts.append(contour)
-                    self.shape_info.append({'label': "Triangle", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour})
+                    self.shape_info.append({'label': "Triangle", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour, 'angle': 0})
                     self.detected = True
                 elif sides == 6:
                     self.hexagon_cnts.append(contour)
-                    self.shape_info.append({'label': "Hexagon", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour})
+                    self.shape_info.append({'label': "Hexagon", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour, 'angle': 0})
                     self.detected = True
                 else:
                     self.circle_cnts.append(contour)
-                    self.shape_info.append({'label': "Circle", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour})
+                    self.shape_info.append({'label': "Circle", 'center': self._find_centrer(contour), 'color': 'no', 'merged': 'no', 'contour': contour, 'angle': 0})
                     self.detected = True
 
                 #Busqueda de circulos por Hough, es mas preciso que el metodo anteriro en el caso de los circulos

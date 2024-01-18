@@ -48,7 +48,8 @@ class DataTransformation:
                     'center': mean_center,
                     'color': shapes[0]['color'], #Se coje el primer color del grupo
                     'merged': 'yes', #Se marca como merged
-                    'contour': shapes[0]['contour'] #Se coje el primer contorno del grupo
+                    'contour': shapes[0]['contour'], #Se coje el primer contorno del grupo
+                    'angle': 0
                 }
                 merged_shapes.append(merged_shape)
         #Añadimos los registros nuevos 

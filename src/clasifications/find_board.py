@@ -35,7 +35,7 @@ class FindBoard:
         inverted_mask = cv2.bitwise_not(mask)
         self.img_no_board = cv2.bitwise_and(img, inverted_mask)
         #Devolvemos el tablero
-        return self.img_board, self.img_no_board, self._find_centrer(max_contour)
+        return self.img_board, self.img_no_board, self._find_centrer(max_contour), max_contour
 
     '''Metodo de preprocesado'''
     def _preproces(self):

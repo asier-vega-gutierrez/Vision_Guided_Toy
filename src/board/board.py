@@ -3,6 +3,7 @@ from data.data_transformation import DataTransformation
 import cv2
 import math
 import numpy as np
+from collections import Counter
 
 class Board:
 
@@ -40,10 +41,10 @@ class Board:
                     filtered_centers.append(centers[i])
             centers = filtered_centers
         #Pintar los puntos en la imagen
-        self.img_draw = self._draw_help(centers, img)
+        self.img_draw = self._draw_help(centers, img, (255, 255, 255))
 
-        #Ordenar los puntos segun x mas pequeña primero
-        sorted_centers = sorted(centers, key=lambda center: center[0])
+        #Ordenar los puntos segun y mas pequeña primero
+        sorted_centers = sorted(centers, key=lambda center: center[1])
         #introducir los centros ordenados
         row_count = len(self.board_places_centers)
         col_count = len(self.board_places_centers[0])
@@ -52,12 +53,12 @@ class Board:
             for j in range(col_count):
                 self.board_places_centers[i][j] = sorted_centers[center_index]
                 center_index += 1
-        #Ordenar los puntos segun y mas pequeña primero por fila
+        #Ordenar los puntos segun x mas pequeña primero por fila
         for id, row in enumerate(self.board_places_centers):
-            sorted_row = sorted(row, key=lambda center: center[1])
+            sorted_row = sorted(row, key=lambda center: center[0])
             self.board_places_centers[id] = sorted_row  
                 
-
+    '''Metodo para actualizar el tablero, se le pasa los datos sobre las piezas de dentro del tablero y las imagenes cropeadas de los huecos del tablero'''
     def update_board(self, data_shapes, img_places):
         color_segmenter = SegmentColor()
         data_transformer = DataTransformation()
@@ -74,33 +75,41 @@ class Board:
                 if dominant_color[0] < 100 or dominant_color[1] < 100 or dominant_color[2] < 100:  #TODO ESTO PUEDE NECESITAR AJUSTES SEGUN EL COLOR
                     #Como los ids (data_shapes y img_places) coinciden puedo almacenar los datos de los que se que estan vacios
                     data_shapes_empty.append(data_shapes[id])
-                    print(data_shapes[id]['center'])
-
-
-
-        #Ahora tengo cutatro de cada (uno por color), pero los que si ha detectado color van a tener uno menos
-        #Circle (1033, 431) no yes (son tres de estos)
-        #Hay que eliminar el grupo entero
-
-
-
+        
+        #Ahora tengo cuatro de cada (uno por color), pero los que si ha detectado color van a tener uno menos Hay que eliminar el grupo entero
+        #Contar la frecuencia de cada tupla 'center'
+        contador = Counter(shape['center'] for shape in data_shapes_empty)
+        #Filtrar solo los diccionarios que tienen la tupla 'center' repetida 3 veces
+        data_shapes_empty = [shape for shape in data_shapes_empty if contador[shape['center']] == 4]        
+        #Ahora eliminamos los repetido con el metodo de los centro ams cercanos
         data_shapes_empty = data_transformer.filter_close_centers(data_shapes_empty, 20)
-        for data in data_shapes_empty:
-            print(data['label'], data['center'], data['color'], data['merged'])
-        pass
+        
+        #Pintamos los centros detectados en la imagen que teniamos con los centros del tablero configurado
+        centers = []
+        for shape in data_shapes_empty:
+            centers.append(shape['center'])
+        self._draw_help(centers, self.img_draw, (255, 0, 0))
 
-        #Haora hay que buscar el centro que mas se parezca a los almacenados y ponerlo a false y el resto a true sea lo que sea
+        #Ahora hay que buscar el centro que mas se parezca a los almacenados y ponerlo a false y el resto a true sea lo que sea
+        for id_row, row in enumerate(self.board_places_centers):
+            for id_place, place in enumerate(row):
+                #Por cada posicion de mi array de centro los copruebao con la lsita buscan encontrar un punto que este muy cerca y por lo tanto indique que este esta libre
+                for shape in data_shapes_empty:
+                    min_distance = self.euclidean_distance(shape['center'], place)
+                    if min_distance < 30: #TODO IGUAL ESTO SE TIEN QUE AJUSTAR
+                        #print(str(min_distance) + ' ' + str(place) + ' ' +str(shape['center']))
+                        self.board_places[id_row][id_place] = False #Se marcan como libres
 
     '''Metodo para sacar la distancia euclidea entre dos puntos'''
     def euclidean_distance(self, center1, center2):
         return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
     
-
-    def _draw_help(self, centers, img):
+    '''Metodo para pintat ayuda sobre la imagen'''
+    def _draw_help(self, centers, img, color):
         #pintar los centros
         for center in centers:
             if center is not None:
-                cv2.circle(img, center, 5, (255, 255, 255), -1)
+                cv2.circle(img, center, 5, color, -1)
         return img
             
     '''Metodo para buscar el color predominate (hsv)'''
