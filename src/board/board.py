@@ -19,6 +19,11 @@ class Board:
                             [(0,0), (0,0), (0,0), (0,0)],
                             [(0,0), (0,0), (0,0), (0,0)],
                             [(0,0), (0,0), (0,0), (0,0)]]
+        #Como el tabelr simepre deve tener la msima posicion los huecos siempre son iguales (el cudraodo de la esquina lo mas cercano a 0,0)
+        self.board_places_type = [["Square", "Circle", "Triangle", "Hexagon"],
+                            ["Hexagon", "Triangle", "Circle", "Square"],
+                            ["Triangle", "Hexagon", "Square", "Circle"],
+                            ["Circle", "Square", "Hexagon", "Triangle"]]
 
     '''Metodo para configurar el tablero, necesita sus formas el tabelro y el centro del tabelro'''
     def configure_board(self, shapes, img, main_center):

@@ -7,6 +7,7 @@ from transformations.pixel_2_real import Pixels2Real
 from clasifications.find_board import FindBoard
 from clasifications.shape_clasifier import ShapeClassifier
 from clasifications.orientation_calc import OrientationCalc
+from clasifications.movement_creation import MovementCreation
 from data.data_transformation import DataTransformation
 
 import cv2
@@ -19,6 +20,7 @@ shape_classifier = ShapeClassifier()
 data_transformer = DataTransformation()
 contour_cropper = ControursCropper()
 orientation_calculer = OrientationCalc()
+movement_creator = MovementCreation()
 out_data_shapes = []
 in_data_shapes = []
 out_contours = []
@@ -26,13 +28,13 @@ in_contours = []
 places_board_imgs = []
 
 #Adqusicion de la imagen
-img = cv2.imread("./img/samples/sample_9_30_full.jpg")
+img = cv2.imread("./img/samples/imagen_rec.jpg")
 img_original = img.copy()
 my_camera = Camera(hw_id=0, w=1280, h=720)
 
 #Base del tablero
 
-#Deteccion del tablero (Resultado: img con solo el tablero, ima con todo menos el tablero)
+#Deteccion del tablero (Resultado: img con solo el tablero, img con todo menos el tablero)
 img_board, img_no_board, board_center, board_contour = board_finder.find_board(img)
 
 #Busqueda de formas en el tablero
@@ -61,7 +63,6 @@ for id, img_color in imgs_colors.items():
 out_data_shapes = data_transformer.filter_close_centers(out_data_shapes, 20)
 #Eliminado de la formas repitas por muy pocos pixeles de distancia en el tablero    
 in_data_shapes = data_transformer.filter_close_centers(in_data_shapes, 20)
-
 
 #Deteccion de huecos vacios o llenos en el tablero
 
@@ -93,14 +94,14 @@ cv2.imwrite(f'./img/img_places_board.jpg', my_board.img_draw)
 #Calculo de la orientacion
 
 #Calculo de la orientacion del tablero
-board_angle, img_orientation = orientation_calculer.calc_board_orientation(img.copy(), board_contour)
+board_angle, img_orientation = orientation_calculer.calc_board_orientation(img.copy(), board_contour, in_data_shapes)
 #Calculo de la orientacion de las piezas
-orientation_calculer.calc_shape_orientation(img_orientation, out_data_shapes)
-#TODO si es cudrado y el angulo esta a 0 90 180 o 270 el algulo pasa a ser 0
-#TODO buscar cual es el angulo para que el tringulo entre (es 270 creo)
+out_data_shapes = orientation_calculer.calc_shape_orientation(img_orientation, out_data_shapes)
+#TODO si es cudrado y el angulo esta a 0 90 180 o 270 el algulo pasa a ser 0, buscar el agulo para que entre (es 0)
+#TODO buscar cual es el angulo para que el tringulo entre (es 270)
+#TODO buscar cual es el angulo apra que el exagono entre (es 90)
 
-
-#Distancia y coreccion de prespectiva
+#Estabelcimento del scalado pixel real
 
 #Configruacion de la imagen de referencia
 img_conf = cv2.imread("./img/img_conf_2.jpg")
@@ -110,7 +111,10 @@ pixel_converter = Pixels2Real(img_conf, real_size_mm)
 for shape in in_data_shapes:
     shape['center'], img_distances = pixel_converter.pixel_2_real(shape['center'], img_conf.copy())
 
-#Correccion de la prespectiva
+#Creador de movimientos formas a tablero
+
+#Llamando a este metodo se genera la lsita de intrucciones para colocar las formas en el tablero
+movement_creator.create_movements(my_board, out_data_shapes, in_data_shapes, img.copy())
 
 
 
