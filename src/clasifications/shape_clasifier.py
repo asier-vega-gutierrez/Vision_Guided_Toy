@@ -8,7 +8,6 @@ class ShapeClassifier:
         #Imagen a buscar la formas e imagen para pintar informacion util
         self.img =  None
         self.img_draw = None
-        self.img_gray = None #TODO No necesito consulta este atributo borrar 
         self.img_blurred = None
         self.img_thresholded = None
         self.contours = None
@@ -38,7 +37,7 @@ class ShapeClassifier:
     '''Metodo para clasificar las formas'''
     def classify_shapes(self, img, min_polygon_area, max_polygon_area, findcontours_type):
         self.detected = False
-        self.reset_cnts() #TODO
+        self.reset_cnts()
 
         self.img = img.copy()
         self.img_draw = img.copy()

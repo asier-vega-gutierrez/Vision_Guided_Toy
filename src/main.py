@@ -26,6 +26,7 @@ in_data_shapes = []
 out_contours = []
 in_contours = []
 places_board_imgs = []
+list_movements = []
 
 #Adqusicion de la imagen
 img = cv2.imread("./img/samples/imagen_rec.jpg")
@@ -97,27 +98,41 @@ cv2.imwrite(f'./img/img_places_board.jpg', my_board.img_draw)
 board_angle, img_orientation = orientation_calculer.calc_board_orientation(img.copy(), board_contour, in_data_shapes)
 #Calculo de la orientacion de las piezas
 out_data_shapes = orientation_calculer.calc_shape_orientation(img_orientation, out_data_shapes)
-#TODO si es cudrado y el angulo esta a 0 90 180 o 270 el algulo pasa a ser 0, buscar el agulo para que entre (es 0)
-#TODO buscar cual es el angulo para que el tringulo entre (es 270)
-#TODO buscar cual es el angulo apra que el exagono entre (es 90)
+
+#Creador de movimientos formas a tablero
+
+#Llamando a este metodo se genera la lsita de intrucciones para colocar las formas en el tablero
+list_movements = movement_creator.create_movements(my_board, out_data_shapes, in_data_shapes, img.copy())
 
 #Estabelcimento del scalado pixel real
 
 #Configruacion de la imagen de referencia
 img_conf = cv2.imread("./img/img_conf_2.jpg")
 real_size_mm = 85
-pixel_converter = Pixels2Real(img_conf, real_size_mm)
 #Deteccion de imagen de refencia y obtencion de escala
-for shape in in_data_shapes:
-    shape['center'], img_distances = pixel_converter.pixel_2_real(shape['center'], img_conf.copy())
+pixel_converter = Pixels2Real(img_conf, real_size_mm)
+#Conversion de los datos
+for id, movement in enumerate(list_movements):
+    movement['center'], img_distances = pixel_converter.pixel_2_real_point(movement['center'], img_conf.copy())
+    movement['aim_center'], img_distances = pixel_converter.pixel_2_real_point(movement['aim_center'], img_conf.copy())
+    movement['center'] = (round(movement['center'][0], 3), round(movement['center'][1], 3))
+    movement['aim_center'] = (round(movement['aim_center'][0], 3), round(movement['aim_center'][1], 3))
+    movement['x'] = round(pixel_converter.pixel_2_real_ditance(movement['x']), 3)
+    movement['y'] = round(pixel_converter.pixel_2_real_ditance(movement['y']), 3)
+    movement['angle'] = round(movement['angle'], 3)
 
-#Creador de movimientos formas a tablero
+    list_movements[id] = movement
 
-#Llamando a este metodo se genera la lsita de intrucciones para colocar las formas en el tablero
-movement_creator.create_movements(my_board, out_data_shapes, in_data_shapes, img.copy())
+#Pintado final de la realizacion del movimiento
+print("Lista de movimientos fiales:")
+for movement in list_movements:
+    print(movement['label'],  movement['color'], movement['center'], movement['aim_center'], movement['x'], movement['y'], movement['angle'], movement['aim_angle'])
 
-
-
+#TODO Establecer que informacion se pinta por consola
+#TODO Guradar todas las imagens en orden por lo emnso en un caso varaido
+#TODO Estalecer que imagenes se van a mostarar (usar varias pantallas en un solo metodo)
+#TODO Realizar imgenes a una buena hora del dia o con una lamapara
+#TODO Probar todo pasa a paso y cuestinar estas tareas
 
 '''
 print("---")

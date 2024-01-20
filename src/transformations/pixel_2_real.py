@@ -16,7 +16,7 @@ class Pixels2Real:
         self.point_mm = None
     
     '''Llamando a este metodo se consigue pasar la informacion de un punto en pixeles a real'''
-    def pixel_2_real(self, point, img):
+    def pixel_2_real_point(self, point, img):
         
         #Generamos la distacia en base al neuvo punto de cordenadas
         self.y_pixels = point[0] - self.cordinate_point[0]
@@ -31,6 +31,13 @@ class Pixels2Real:
 
         #Se devuelve el punto en mm y la imagen con la ayuda
         return self.point_mm, self.img_draw
+    
+    '''Llamando a este metodo se consigue pasar la informacion de una distacia en pixeles a real'''
+    def pixel_2_real_ditance(self, dist):
+        dist = dist * self.scale
+        return dist
+
+
     
     '''Metodo para pintar lineas de ayuda sobre la imagen'''
     def _draw(self, img):

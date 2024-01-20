@@ -123,6 +123,8 @@ class OrientationCalc:
 
         return nearest_point
 
+
+
     def _draw_img(self, img, box, board_line, straight_line):
         cv2.drawContours(img, [box], 0, (0, 255, 0), 2)
         cv2.line(img, board_line[0], board_line[1], (255,0,0), 3)
