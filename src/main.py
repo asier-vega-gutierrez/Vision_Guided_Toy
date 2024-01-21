@@ -1,5 +1,7 @@
+import cv2
 from camera.camera import Camera
 from board.board import Board
+from screen.display_3x3 import display3x3
 from transformations.erase_background import EraseBackground
 from transformations.segment_color import SegmentColor
 from transformations.contours_cropper import ControursCropper
@@ -10,26 +12,28 @@ from clasifications.orientation_calc import OrientationCalc
 from clasifications.movement_creation import MovementCreation
 from data.data_transformation import DataTransformation
 
-import cv2
+
 
 #Variables
-background_eraser = EraseBackground() 
+#Objetos
+background_eraser = EraseBackground()
+color_segmenter = SegmentColor() 
+contour_cropper = ControursCropper()
 board_finder = FindBoard()
-color_segmenter = SegmentColor()
 shape_classifier = ShapeClassifier()
 data_transformer = DataTransformation()
-contour_cropper = ControursCropper()
 orientation_calculer = OrientationCalc()
 movement_creator = MovementCreation()
+#Listas
 out_data_shapes = []
+out_img_shapes = []
 in_data_shapes = []
-out_contours = []
-in_contours = []
 places_board_imgs = []
 list_movements = []
+list_movements_imgs = []
 
 #Adqusicion de la imagen
-img = cv2.imread("./img/samples/imagen_rec.jpg")
+img = cv2.imread("./img/test/imagen_3.jpg")
 img_original = img.copy()
 my_camera = Camera(hw_id=0, w=1280, h=720)
 
@@ -43,7 +47,8 @@ data_shape, detected, img_shape, in_contours = shape_classifier.classify_shapes(
 if detected == True:
     for shape in data_shape:
         in_data_shapes.append(shape)
-    cv2.imwrite(f'./img/img_shapes_board.jpg', img_shape)
+    img_shape_board = img_shape
+    
 
 #Eliminado del fondo de la imagen sin tablero
 img_no_backgound = background_eraser.erase_background(img_no_board, color_type = 0, tolerance = 50)
@@ -58,7 +63,7 @@ for id, img_color in imgs_colors.items():
         for shape in data_shape:
             shape['color'] = id
             out_data_shapes.append(shape)
-        cv2.imwrite(f'./img/img_shapes_{id}.jpg', img_shape)
+        out_img_shapes.append(img_shape)
 
 #Eliminado de la formas repitas por muy pocos pixeles de distancia fuera del tablero 
 out_data_shapes = data_transformer.filter_close_centers(out_data_shapes, 20)
@@ -68,14 +73,14 @@ in_data_shapes = data_transformer.filter_close_centers(in_data_shapes, 20)
 #Deteccion de huecos vacios o llenos en el tablero
 
 #Configurar el tablero
-img_conf = cv2.imread("./img/img_conf_1.jpg")
+img_conf = cv2.imread("./img/conf/imagen_1.jpg")
 img_board_conf, img_no_board_conf, board_center_conf, board_contour_conf = board_finder.find_board(img_conf) #se busca el tablero
 board_data_shapes_conf = [] #se clasifican las formas del tablero
 data_shape_conf, detected_conf, img_shape_conf, in_contours_conf = shape_classifier.classify_shapes(img_board_conf, min_polygon_area = 2000, max_polygon_area = 15000, findcontours_type = cv2.RETR_TREE)
 if detected_conf == True:
     for shape in data_shape_conf:
         board_data_shapes_conf.append(shape)
-    cv2.imwrite(f'./img/img_shapes_board_conf.jpg', img_shape_conf)
+    img_shapes_board_conf = img_shape_conf
 board_data_shapes_conf = data_transformer.filter_close_centers(board_data_shapes_conf, 20) #Se limpian las formas del tablero
 
 #Creacion del tablero
@@ -87,10 +92,9 @@ my_board.configure_board(board_data_shapes_conf, img_board_conf, board_center_co
 places_board_imgs = contour_cropper.crop_contours_shapes(img, in_data_shapes, min_contour_area = 2000, max_contour_area = 15000)
 #Actualizar el tablero (las posiciones de in_data_shapes coinciden con las de places_board_imgs)
 my_board.update_board(in_data_shapes, places_board_imgs)
-print("El tablero detectado:")
+print("Tablero actual:")
 for row in my_board.board_places:
     print(row)
-cv2.imwrite(f'./img/img_places_board.jpg', my_board.img_draw)
 
 #Calculo de la orientacion
 
@@ -102,12 +106,12 @@ out_data_shapes = orientation_calculer.calc_shape_orientation(img_orientation, o
 #Creador de movimientos formas a tablero
 
 #Llamando a este metodo se genera la lsita de intrucciones para colocar las formas en el tablero
-list_movements = movement_creator.create_movements(my_board, out_data_shapes, in_data_shapes, img.copy())
+list_movements, list_movements_imgs = movement_creator.create_movements(my_board, out_data_shapes, in_data_shapes, img.copy())
 
 #Estabelcimento del scalado pixel real
 
 #Configruacion de la imagen de referencia
-img_conf = cv2.imread("./img/img_conf_2.jpg")
+img_conf = cv2.imread("./img/conf/imagen_1.jpg")
 real_size_mm = 85
 #Deteccion de imagen de refencia y obtencion de escala
 pixel_converter = Pixels2Real(img_conf, real_size_mm)
@@ -124,9 +128,32 @@ for id, movement in enumerate(list_movements):
     list_movements[id] = movement
 
 #Pintado final de la realizacion del movimiento
+    
+#Listado de movimientos
 print("Lista de movimientos fiales:")
 for movement in list_movements:
     print(movement['label'],  movement['color'], movement['center'], movement['aim_center'], movement['x'], movement['y'], movement['angle'], movement['aim_angle'])
+
+#Imagenes
+display3x3('imagen', img, 1)
+cv2.imwrite(f'./img/results/0-img.jpg', img)
+display3x3('imagen_conf', img_conf, 2)
+cv2.imwrite(f'./img/results/1-img_conf.jpg', img_conf)
+display3x3('imagen_conf_res', img_shape_conf, 3)
+cv2.imwrite(f'./img/results/2-img_shape_conf.jpg', img_shape_conf)
+display3x3('imagen_board', img_shape_board, 4)
+cv2.imwrite(f'./img/results/3-img_shapes_board.jpg', img_shape_board)
+display3x3('imagen_board_places', my_board.img_draw, 5)
+cv2.imwrite(f'./img/results/4-img_board_places.jpg', my_board.img_draw)
+for id, img in enumerate(out_img_shapes):
+    display3x3(id, img, id+6)
+    cv2.imwrite(f'./img/results/5-img_shape_{id}.jpg', img)
+for id, img in enumerate(list_movements_imgs):
+    cv2.imshow('Result' + str(id), img)
+    cv2.imwrite(f'./img/results/6-img_result_{id}.jpg', img)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 #TODO Establecer que informacion se pinta por consola
 #TODO Guradar todas las imagens en orden por lo emnso en un caso varaido

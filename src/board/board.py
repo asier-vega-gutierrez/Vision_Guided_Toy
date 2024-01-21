@@ -5,6 +5,7 @@ import math
 import numpy as np
 from collections import Counter
 
+'''Clase tablero repersenta la informacion de un tablero'''
 class Board:
 
     def __init__(self) -> None:
@@ -33,15 +34,15 @@ class Board:
             centers.append(shape['center'])
 
         #Compovar que sean 16 centros (si no lo son se busca y elimina el centro del centro del tabelero)
-        print("Numero de posicones encontradas durante la conf: " + str(len(centers)))
-        if len(centers) != 16:
+        #print("Numero de posicones encontradas durante la conf: " + str(len(centers)))
+        if len(centers) > 16:
             #Eliminar el dentro del tablero, introducioendolo a la lista y luego borrando ambos
             centers.append(main_center)
             filtered_centers = []
             #Se busca el punto mas cercano al centro y luego se borran ambos
             for i in range(len(centers)):
                 center_i = centers[i]
-                is_far_enough = all(self.euclidean_distance(center_i, centers[j]) >= 20 for j in range(len(centers)) if i != j)
+                is_far_enough = all(self.euclidean_distance(center_i, centers[j]) >= 50 for j in range(len(centers)) if i != j)
                 if is_far_enough:
                     filtered_centers.append(centers[i])
             centers = filtered_centers
@@ -58,6 +59,12 @@ class Board:
             for j in range(col_count):
                 self.board_places_centers[i][j] = sorted_centers[center_index]
                 center_index += 1
+                #No siemre se pueden recorrer todas las posiciones porque no se han detectado devido a cambios de luz
+                if len(sorted_centers) == center_index:
+                    break
+            else:
+                continue
+            break 
         #Ordenar los puntos segun x mas pequeña primero por fila
         for id, row in enumerate(self.board_places_centers):
             sorted_row = sorted(row, key=lambda center: center[0])
@@ -67,7 +74,7 @@ class Board:
     def update_board(self, data_shapes, img_places):
         color_segmenter = SegmentColor()
         data_transformer = DataTransformation()
-        print("Numero de imagenes detectadas en el tablero: " + str(len(img_places))) #El nuemro de images deveria ser 16
+        #print("Numero de imagenes detectadas en el tablero: " + str(len(img_places))) #El nuemro de images deveria ser 16
         #Buscar las posiciones vacias
         data_shapes_empty = []
         for id, img in enumerate(img_places):
@@ -80,6 +87,7 @@ class Board:
                 if dominant_color[0] < 100 or dominant_color[1] < 100 or dominant_color[2] < 100:  #TODO ESTO PUEDE NECESITAR AJUSTES SEGUN EL COLOR
                     #Como los ids (data_shapes y img_places) coinciden puedo almacenar los datos de los que se que estan vacios
                     data_shapes_empty.append(data_shapes[id])
+
         
         #Ahora tengo cuatro de cada (uno por color), pero los que si ha detectado color van a tener uno menos Hay que eliminar el grupo entero
         #Contar la frecuencia de cada tupla 'center'
@@ -101,7 +109,7 @@ class Board:
                 #Por cada posicion de mi array de centro los copruebao con la lsita buscan encontrar un punto que este muy cerca y por lo tanto indique que este esta libre
                 for shape in data_shapes_empty:
                     min_distance = self.euclidean_distance(shape['center'], place)
-                    if min_distance < 30: #TODO IGUAL ESTO SE TIEN QUE AJUSTAR
+                    if min_distance < 30:
                         #print(str(min_distance) + ' ' + str(place) + ' ' +str(shape['center']))
                         self.board_places[id_row][id_place] = False #Se marcan como libres
 
