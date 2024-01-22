@@ -37,8 +37,6 @@ class Pixels2Real:
         dist = dist * self.scale
         return dist
 
-
-    
     '''Metodo para pintar lineas de ayuda sobre la imagen'''
     def _draw(self, img):
         w, h, _ = img.shape

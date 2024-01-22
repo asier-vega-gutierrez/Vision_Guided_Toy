@@ -14,12 +14,6 @@ class MovementCreation:
         for id, shape in enumerate(out_data_shapes):
             shape['find'] = False
             out_data_shapes[id] = shape
-
-        #BIEN
-        for data in out_data_shapes:
-            print(data['label'], data['center'], data['color'], data['merged'], data['angle'])
-        for data in in_data_shapes: 
-            print(data['label'], data['center'], data['color'], data['merged'], data['angle'])
             
         #Se itera por todas las formas encontradas fuera junto con todas las posciones encrontradas dentro
         for id, out_shape in enumerate(out_data_shapes):
@@ -33,14 +27,6 @@ class MovementCreation:
                             if out_shape['label'] == place and board.board_places[id_row][id_place] == False and out_shape['find'] == False:
                                 #Con esto ya tendriamos la pieza colacada, ahora se guardan las cordenadas obejtivo
                                 aim_cordinates = board.board_places_centers[id_row][id_place]
-
-                                #EL PROBLEMA ESTA EN board_places_type NO SE MUY BIEN PROQUE
-                                print(out_shape['label'] + board.board_places_type[id_row][id_place])
-                                cv2.circle(img, aim_cordinates, 4, (255,0,0))
-                                cv2.circle(img, out_shape['center'], 4, (255,0,0))
-                                cv2.imshow('Image', img)
-                                cv2.waitKey(0)
-                                cv2.destroyAllWindows()
 
                                 #Tambien es necesario establecer un angulo objetivo (como se coje de referencia el tablero se peuden poner talcual)
                                 if out_shape['label'] == "Square":

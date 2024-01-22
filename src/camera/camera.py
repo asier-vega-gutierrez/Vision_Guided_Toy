@@ -61,6 +61,6 @@ class Camera:
 
     '''Metodo para leer los archvios de guardado con los parametros'''
     def open_file_parameters(self, file: str):
-        with open('./camera/calibration/parameters/' + file, 'rb') as f:
+        with open('./src/camera/calibration/parameters/' + file, 'rb') as f:
             calibration_data = pickle.load(f)
         return calibration_data

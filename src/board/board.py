@@ -51,6 +51,25 @@ class Board:
 
         #Ordenar los puntos segun y mas pequeña primero
         sorted_centers = sorted(centers, key=lambda center: center[1])
+        
+        '''
+        #####Rellenado (para que no haga falta que la configuracion detecte todas las piezas) NO FUNCIONA
+        print(sorted_centers)
+        #Se agrupan los puntos en 4 grupos segun su y
+        grupos = []
+        grupo_actual = []
+        for punto in sorted_centers:
+            if not grupo_actual or abs(punto[1] - grupo_actual[-1][1]) <= 30: #tolerancia de +-30  para la y
+                grupo_actual.append(punto)
+            else:
+                grupos.append(grupo_actual)
+                grupo_actual = [punto]
+        # Agregar el último grupo
+        if grupo_actual:
+            grupos.append(grupo_actual)
+        print(grupos)'''
+
+
         #introducir los centros ordenados
         row_count = len(self.board_places_centers)
         col_count = len(self.board_places_centers[0])
@@ -59,12 +78,6 @@ class Board:
             for j in range(col_count):
                 self.board_places_centers[i][j] = sorted_centers[center_index]
                 center_index += 1
-                #No siemre se pueden recorrer todas las posiciones porque no se han detectado devido a cambios de luz
-                if len(sorted_centers) == center_index:
-                    break
-            else:
-                continue
-            break 
         #Ordenar los puntos segun x mas pequeña primero por fila
         for id, row in enumerate(self.board_places_centers):
             sorted_row = sorted(row, key=lambda center: center[0])
