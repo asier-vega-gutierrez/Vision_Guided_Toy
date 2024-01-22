@@ -4,6 +4,8 @@ import cv2
 import math
 import numpy as np
 from collections import Counter
+from common.common import find_dominant_color_hsv
+from common.common import euclidean_distance
 
 '''Clase tablero repersenta la informacion de un tablero'''
 class Board:
@@ -95,7 +97,7 @@ class Board:
             imgs_colors = color_segmenter.get_segmented_imgs(img)
             #Por cada imagen con color se busca el color dominante
             for id_color, img_color in imgs_colors.items():
-                dominant_color = self._find_dominant_color_hsv(img_color)
+                dominant_color = find_dominant_color_hsv(img_color)
                 #Si el color dominate es negro entronces el espacio esta vacio
                 if dominant_color[0] < 100 or dominant_color[1] < 100 or dominant_color[2] < 100:  #TODO ESTO PUEDE NECESITAR AJUSTES SEGUN EL COLOR
                     #Como los ids (data_shapes y img_places) coinciden puedo almacenar los datos de los que se que estan vacios
@@ -121,14 +123,14 @@ class Board:
             for id_place, place in enumerate(row):
                 #Por cada posicion de mi array de centro los copruebao con la lsita buscan encontrar un punto que este muy cerca y por lo tanto indique que este esta libre
                 for shape in data_shapes_empty:
-                    min_distance = self.euclidean_distance(shape['center'], place)
+                    min_distance = euclidean_distance(shape['center'], place)
                     if min_distance < 30:
                         #print(str(min_distance) + ' ' + str(place) + ' ' +str(shape['center']))
                         self.board_places[id_row][id_place] = False #Se marcan como libres
 
     '''Metodo para sacar la distancia euclidea entre dos puntos'''
-    def euclidean_distance(self, center1, center2):
-        return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
+    '''def euclidean_distance(self, center1, center2):
+        return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)'''
     
     '''Metodo para pintat ayuda sobre la imagen'''
     def _draw_help(self, centers, img, color):
@@ -139,7 +141,7 @@ class Board:
         return img
             
     '''Metodo para buscar el color predominate (hsv)'''
-    def _find_dominant_color_hsv(self, img):      
+    '''def _find_dominant_color_hsv(self, img):      
         # Reshape the image to be a list of pixels
         pixels = img.reshape(-1, 3)
         # Convert to float32 for k-means clustering
@@ -153,4 +155,4 @@ class Board:
         rgb_dominant_color = centers[0].astype(np.uint8)[::-1]
         hsv_dominant_color = cv2.cvtColor(np.array([[rgb_dominant_color]], dtype=np.uint8), cv2.COLOR_RGB2HSV)[0][0]
         # Retur hsv dominant color
-        return tuple(hsv_dominant_color)
+        return tuple(hsv_dominant_color)'''

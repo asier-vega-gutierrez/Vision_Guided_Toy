@@ -68,7 +68,6 @@ class OrientationCalc:
                 #Pintamos la informacion en la imagen
                 self._draw_img(img, np.int0(triangle_contour), shape_line, self.straight_line)
                 
-
             elif shape['label'] == "Hexagon":
                 # Assuming the contour of the hexagon is available in shape['contour']
                 hexagon_contour = shape['contour']
@@ -89,7 +88,7 @@ class OrientationCalc:
         #Devolvemos la nueva lista con los angulos
         return data_shapes
        
-
+    '''Metodo para calcular el angulo entre dos lieneas'''
     def _cal_angle_2_lines(self, straight, line):
         #Calcular el vector de dirección para cada línea
         vector_line = line[1] - line[0]
@@ -107,6 +106,7 @@ class OrientationCalc:
         theta_degrees = np.degrees(theta_rad)
         return theta_degrees
 
+    '''Metodo para buscar el punto mas cercano'''
     def _find_nearest_point(self, points):
 
         # Convert the list of points to a NumPy array for easier calculations
@@ -122,7 +122,6 @@ class OrientationCalc:
         nearest_point = tuple(points_array[index_of_nearest_point])
 
         return nearest_point
-
 
 
     def _draw_img(self, img, box, board_line, straight_line):

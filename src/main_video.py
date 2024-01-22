@@ -14,7 +14,7 @@ from data.data_transformation import DataTransformation
 
 
 def main():
-    #Variables
+
     #Objetos
     background_eraser = EraseBackground()
     color_segmenter = SegmentColor() 
@@ -132,7 +132,10 @@ def main():
     #Listado de movimientos
     print("Lista de movimientos fiales:")
     for movement in list_movements:
-        print(movement['label'],  movement['color'], movement['center'], movement['aim_center'], movement['x'], movement['y'], movement['angle'], movement['aim_angle'])
+        print("Pieza: {:<10} Color: {:<10} Ubicada: {:<20} Angulo: {:<10} Objetivo: {:<20} x: {:<10} y: {:<10} Angulo objetivo: {:<10}".format(
+            str(movement['label']), str(movement['color']), str(movement['center']), str(movement['angle']),
+            str(movement['aim_center']), str(movement['x']), str(movement['y']), str(movement['aim_angle'])
+        ))
 
     #Imagenes
     display3x3('imagen', img, 1)

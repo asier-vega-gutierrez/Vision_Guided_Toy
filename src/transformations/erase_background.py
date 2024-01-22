@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from common.common import find_dominant_color_hsv
+from common.common import find_dominant_color_lab
 
 '''Clase para sliminar el fondo segun color predominante (hsv)'''
 class EraseBackground():
@@ -15,10 +17,10 @@ class EraseBackground():
         #Definir el color que se quiere eliminar
         if color_type == 0:
             img_colored = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            color_to_remove = self._find_dominant_color_hsv()
+            color_to_remove = find_dominant_color_hsv(img)
         elif color_type == 1:
             img_colored = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)
-            color_to_remove = self._find_dominant_color_lab()
+            color_to_remove = find_dominant_color_lab(img)
 
         #Se calculan los rangos alto y bajo segun el parametro de entrada
         lower_bound = (color_to_remove[0] - tolerance, color_to_remove[1] - tolerance, color_to_remove[2] - tolerance)
@@ -49,7 +51,7 @@ class EraseBackground():
         return self.img_draw
     
     '''Metodo para buscar el color predominate (hsv)'''
-    def _find_dominant_color_hsv(self):      
+    '''def _find_dominant_color_hsv(self):      
         # Reshape the image to be a list of pixels
         pixels = self.img.reshape(-1, 3)
         # Convert to float32 for k-means clustering
@@ -63,10 +65,10 @@ class EraseBackground():
         rgb_dominant_color = centers[0].astype(np.uint8)[::-1]
         hsv_dominant_color = cv2.cvtColor(np.array([[rgb_dominant_color]], dtype=np.uint8), cv2.COLOR_RGB2HSV)[0][0]
         # Retur hsv dominant color
-        return tuple(hsv_dominant_color)
+        return tuple(hsv_dominant_color)'''
     
     '''Metodo para buscar el color predominate (lab)'''
-    def _find_dominant_color_lab(self):      
+    ''' def _find_dominant_color_lab(self):      
         # Reshape the image to be a list of pixels
         pixels = self.img.reshape(-1, 3)
         # Convert to float32 for k-means clustering
@@ -80,5 +82,5 @@ class EraseBackground():
         rgb_dominant_color = centers[0].astype(np.uint8)[::-1]
         lab_dominant_color = cv2.cvtColor(np.array([[rgb_dominant_color]], dtype=np.uint8), cv2.COLOR_RGB2Lab)[0][0]
         # Retur lab dominant color
-        return tuple(lab_dominant_color)
+        return tuple(lab_dominant_color)'''
     

@@ -1,4 +1,5 @@
 import math
+from common.common import euclidean_distance
 
 class DataTransformation:
   
@@ -12,7 +13,7 @@ class DataTransformation:
         #Primero descartamos todas las figuras que esten muy cerca
         for i in range(len(shapes)):
             center_i = shapes[i]['center']
-            is_far_enough = all(self.euclidean_distance(center_i, shapes[j]['center']) >= distance_threshold for j in range(len(shapes)) if i != j)
+            is_far_enough = all(euclidean_distance(center_i, shapes[j]['center']) >= distance_threshold for j in range(len(shapes)) if i != j)
             if is_far_enough:
                 filtered_shapes.append(shapes[i])
             else:
@@ -28,7 +29,7 @@ class DataTransformation:
                 #Se va comprovando que no haya un grupo cerca ya creado
                 is_close_to_group = False
                 for center, shapes_in_group in grouped_shapes.items():
-                    if all(self.euclidean_distance(center_i, shape['center']) < distance_threshold for shape in shapes_in_group):
+                    if all(euclidean_distance(center_i, shape['center']) < distance_threshold for shape in shapes_in_group):
                         grouped_shapes[center].append(shape_i)
                         is_close_to_group = True
                         break
@@ -59,5 +60,5 @@ class DataTransformation:
         return filtered_shapes
     
     '''Metodo para sacar la distancia euclidea entre dos puntos'''
-    def euclidean_distance(self, center1, center2):
-        return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)
+    '''def euclidean_distance(self, center1, center2):
+        return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)'''
