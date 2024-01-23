@@ -10,6 +10,7 @@ class ControursCropper:
 
         '''Metodo para cropear la imagen del tablero segun laos contornos pasados'''
         def crop_contours_shapes(self, img, data_shape, min_contour_area, max_contour_area):
+                self.cropped_image = []
                 self.img = img
                 for shape in data_shape:
                         area = cv2.contourArea(shape['contour'])

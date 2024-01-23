@@ -32,7 +32,7 @@ def main():
     list_movements_imgs = []
 
     #Adqusicion de la imagen
-    img = cv2.imread("./data/test/imagen_1.jpg")
+    img = cv2.imread("./data/test/test_1.jpg")
     img_conf = cv2.imread("./data/conf/conf_2.jpg")
     img_original = img.copy()
 
@@ -143,12 +143,15 @@ def main():
     cv2.imwrite(f'./img/results/2-img_shape_conf.jpg', img_shape_conf)
     display3x3('imagen_board', img_shape_board, 4)
     cv2.imwrite(f'./img/results/3-img_shapes_board.jpg', img_shape_board)
-    display3x3('imagen_board_places', my_board.img_draw, 5)
-    cv2.imwrite(f'./img/results/4-img_board_places.jpg', my_board.img_draw)
+    display3x3('imagen_board_places', my_board.img_draw_full, 5)
+    cv2.imwrite(f'./img/results/4-img_board_places.jpg', my_board.img_draw_full)
     for id, img in enumerate(out_img_shapes):
         display3x3(id, img, id+6)
         cv2.imwrite(f'./img/results/5-img_shape_{id}.jpg', img)
     for id, img in enumerate(list_movements_imgs):
+        list_movements[id]
+        label = "x: " + str(list_movements[id]['x']) + " y: " + str(list_movements[id]['y']) + " angle: " +str(list_movements[id]['angle'])
+        cv2.putText(img, label, (30,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
         cv2.imshow('Result' + str(id), img)
         cv2.imwrite(f'./img/results/6-img_result_{id}.jpg', img)
 

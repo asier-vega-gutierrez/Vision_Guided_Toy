@@ -12,6 +12,7 @@ class Board:
 
     def __init__(self) -> None:
         self.img_draw = None
+        self.img_draw_full = None
         #suponer que si no la detecta ya esta relleno
         self.board_places = [[True, True, True, True],
                             [True, True, True, True],
@@ -78,8 +79,12 @@ class Board:
         center_index = 0
         for i in range(row_count):
             for j in range(col_count):
-                self.board_places_centers[i][j] = sorted_centers[center_index]
-                center_index += 1
+                #try:
+                    self.board_places_centers[i][j] = sorted_centers[center_index]
+                    center_index += 1
+                #except IndexError as er:
+                    #self.board_places_centers[i][j] = np.zeros((100, 100, 3), dtype=np.uint8)
+                    #print("Imagen de configuracion incorrecta")
         #Ordenar los puntos segun x mas pequeña primero por fila
         for id, row in enumerate(self.board_places_centers):
             sorted_row = sorted(row, key=lambda center: center[0])
@@ -116,7 +121,7 @@ class Board:
         centers = []
         for shape in data_shapes_empty:
             centers.append(shape['center'])
-        self._draw_help(centers, self.img_draw, (255, 0, 0))
+        self.img_draw_full = self._draw_help(centers, self.img_draw.copy(), (255, 0, 0))
 
         #Ahora hay que buscar el centro que mas se parezca a los almacenados y ponerlo a false y el resto a true sea lo que sea
         for id_row, row in enumerate(self.board_places_centers):
@@ -128,10 +133,6 @@ class Board:
                         #print(str(min_distance) + ' ' + str(place) + ' ' +str(shape['center']))
                         self.board_places[id_row][id_place] = False #Se marcan como libres
 
-    '''Metodo para sacar la distancia euclidea entre dos puntos'''
-    '''def euclidean_distance(self, center1, center2):
-        return math.sqrt((center1[0] - center2[0])**2 + (center1[1] - center2[1])**2)'''
-    
     '''Metodo para pintat ayuda sobre la imagen'''
     def _draw_help(self, centers, img, color):
         #pintar los centros
@@ -139,20 +140,3 @@ class Board:
             if center is not None:
                 cv2.circle(img, center, 5, color, -1)
         return img
-            
-    '''Metodo para buscar el color predominate (hsv)'''
-    '''def _find_dominant_color_hsv(self, img):      
-        # Reshape the image to be a list of pixels
-        pixels = img.reshape(-1, 3)
-        # Convert to float32 for k-means clustering
-        pixels = np.float32(pixels)
-        # Perform k-means clustering
-        k = 1
-        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
-        _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-        # Convert the center color from BGR to RGB format
-        bgr_dominant_color = centers[0].astype(np.uint8)
-        rgb_dominant_color = centers[0].astype(np.uint8)[::-1]
-        hsv_dominant_color = cv2.cvtColor(np.array([[rgb_dominant_color]], dtype=np.uint8), cv2.COLOR_RGB2HSV)[0][0]
-        # Retur hsv dominant color
-        return tuple(hsv_dominant_color)'''

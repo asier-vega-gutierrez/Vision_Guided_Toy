@@ -90,4 +90,6 @@ class MovementCreation:
                 cv2.line(img, (out_center[0] - x, out_center[1]), (out_center[0] - x, out_center[1] + y), (0,0,255), 2)
             else:
                 cv2.line(img, (out_center[0] - x, out_center[1]), (out_center[0] - x, out_center[1] - y), (0,0,255), 2)
+        label = "x:"
+        
         return img

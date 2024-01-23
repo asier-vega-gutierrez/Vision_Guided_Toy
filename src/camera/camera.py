@@ -10,7 +10,7 @@ class Camera:
         self.video_capturer = self.set_video_capute(hw_id, w, h) #Capturador de video configurado segun hardware
         self.size = (int(self.video_capturer.get(cv2.CAP_PROP_FRAME_WIDTH)), int(self.video_capturer.get(cv2.CAP_PROP_FRAME_HEIGHT)))
         self.frame = None #Frame actual capturado
-        self.success = None #Estado de la carpura del frame TODO
+        self.success = None #Estado de la carpura del frame 
         #Calibration parameters
         self.camera_matrix = self.open_file_parameters("cameraMatrix.pkl") #Matriz resultante de la calibracion
         self.dist_coeffs = self.open_file_parameters("dist.pkl") #Coneficiontes de las distancias
@@ -25,13 +25,14 @@ class Camera:
     '''Metodo para recuperar el frame actual de la camara'''
     def get_frame(self):
         self.record()
-        return self.frame
+        return self.frame, self.success
     
     '''Metodo para mostrar el frame actual de la camara'''
     def show_frame(self):
         self.record()
         cv2.imshow('Camera_streaming', self.frame)
         cv2.waitKey(1)
+        return self.frame
 
     '''Metodo para gravar segun configuracion de la calibracionS'''
     def record(self):
@@ -49,8 +50,10 @@ class Camera:
             dst = dst[y:y+h, x:x+w]
             #Seteado del frame actual
             self.frame = dst
+            self.success = True
         else:
             print("E : error al capturar el frame")
+            self.success = False
             return
 
 
