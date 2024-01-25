@@ -113,7 +113,10 @@ class OrientationCalc:
         points_array = np.array(points)
 
         # Calculate the distances from each point to (0,0)
-        distances = np.linalg.norm(points_array, axis=1)
+        try:
+            distances = np.linalg.norm(points_array, axis=1)
+        except np.exceptions.AxisError:
+            raise(ValueError("Error al calcular la orientacion"))
 
         # Find the index of the point with the minimum distance
         index_of_nearest_point = np.argmin(distances)

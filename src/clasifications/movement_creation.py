@@ -9,6 +9,9 @@ class MovementCreation:
 
     '''Este metodo recive la informacion del tabelerlo, las formas de fuera y de dentro del tabelero'''
     def create_movements(self, board, out_data_shapes, in_data_shapes, img):
+        #Reiniciamos las listas
+        self.list_movements = []
+        self.imgs_draw = []
 
         #Se añade un atributo find al diccionario de las fomas de fuera
         for id, shape in enumerate(out_data_shapes):
