@@ -6,4 +6,4 @@
     <li>Imagen resumen:</li>
 </ul>
 
-![foto](https://github.com/asier-vega-gutierrez/Vision_Guided_Toy/blob/main/aplication.png)
+![foto](https://github.com/asier-vega-gutierrez/Vision_Guided_Toy/blob/main/doc/aplication.png)
