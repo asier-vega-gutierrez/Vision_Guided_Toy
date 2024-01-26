@@ -47,12 +47,11 @@ def main():
         for shape in data_shape:
             in_data_shapes.append(shape)
         img_shape_board = img_shape
-        
+
+    #Base de las formas
 
     #Eliminado del fondo de la imagen sin tablero
     img_no_backgound = background_eraser.erase_background(img_no_board, color_type = 0, tolerance = 50)
-
-    #Base de las formas
 
     #Busqueda de formas fuera del tablero por colores
     imgs_colors = color_segmenter.get_segmented_imgs(img_no_backgound)
@@ -136,24 +135,27 @@ def main():
 
     #Imagenes
     display3x3('imagen', img, 1)
-    cv2.imwrite(f'./img/results/0-img.jpg', img)
+    cv2.imwrite(f'./data/results/0-img.jpg', img)
+    cv2.imwrite(f'./data/results/0.1-img_no_board.jpg', img_no_board)
+    cv2.imwrite(f'./data/results/0.2-img_board.jpg', img_board)
+    cv2.imwrite(f'./data/results/0.3-img_no_background.jpg', img_no_backgound)
     display3x3('imagen_conf', img_conf, 2)
-    cv2.imwrite(f'./img/results/1-img_conf.jpg', img_conf)
+    cv2.imwrite(f'./data/results/1-img_conf.jpg', img_conf)
     display3x3('imagen_conf_res', img_shape_conf, 3)
-    cv2.imwrite(f'./img/results/2-img_shape_conf.jpg', img_shape_conf)
+    cv2.imwrite(f'./data/results/2-img_shape_conf.jpg', img_shape_conf)
     display3x3('imagen_board', img_shape_board, 4)
-    cv2.imwrite(f'./img/results/3-img_shapes_board.jpg', img_shape_board)
+    cv2.imwrite(f'./data/results/3-img_shapes_board.jpg', img_shape_board)
     display3x3('imagen_board_places', my_board.img_draw_full, 5)
-    cv2.imwrite(f'./img/results/4-img_board_places.jpg', my_board.img_draw_full)
+    cv2.imwrite(f'./data/results/4-img_board_places.jpg', my_board.img_draw_full)
     for id, img in enumerate(out_img_shapes):
         display3x3(id, img, id+6)
-        cv2.imwrite(f'./img/results/5-img_shape_{id}.jpg', img)
+        cv2.imwrite(f'./data/results/5-img_shape_{id}.jpg', img)
     for id, img in enumerate(list_movements_imgs):
         list_movements[id]
         label = "x: " + str(list_movements[id]['x']) + " y: " + str(list_movements[id]['y']) + " angle: " +str(list_movements[id]['angle'])
         cv2.putText(img, label, (30,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
         cv2.imshow('Result' + str(id), img)
-        cv2.imwrite(f'./img/results/6-img_result_{id}.jpg', img)
+        cv2.imwrite(f'./data/results/6-img_result_{id}.jpg', img)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
