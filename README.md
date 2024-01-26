@@ -6,4 +6,4 @@
     <li>Imagen resumen:</li>
 </ul>
 
-![foto](https://github.com/asier-vega-gutierrez/SmartFactory/blob/main/net.png)
+![foto](https://github.com/asier-vega-gutierrez/Vision_Guided_Toy/blob/main/aplication.png)
